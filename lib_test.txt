@@ -1,0 +1,182 @@
+CREATE TABLE IF NOT EXISTS `library`.`Category` (
+  `category_id` INT NOT NULL AUTO_INCREMENT,
+  `category_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`category_id`))
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Category` (`category_id`, `category_name`) VALUES (1010, 'Classics');
+INSERT INTO `library`.`Category` (`category_id`, `category_name`) VALUES (2020, 'Fantasy');
+INSERT INTO `library`.`Category` (`category_id`, `category_name`) VALUES (3030, 'Horror');
+INSERT INTO `library`.`Category` (`category_id`, `category_name`) VALUES (4040, 'Detective ');
+
+CREATE TABLE IF NOT EXISTS `library`.`Book` (
+  `book_id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(45) NOT NULL,
+  `publish-year` INT NOT NULL,
+  `category_id` INT NOT NULL,
+  `copies_owned` INT NOT NULL,
+  PRIMARY KEY (`book_id`),
+  INDEX `category_id_idx` (`category_id` ASC) VISIBLE,
+  CONSTRAINT `category_id`
+    FOREIGN KEY (`category_id`)
+    REFERENCES `library`.`Category` (`category_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (1, 'Hamlet', 1603, 1010, 2);
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (2, 'Harry Potter', 1998, 2020, 5);
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (3, 'Eugene Onegin', 1833, 1010, 3);
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (4, 'It', 1986, 3030, 2);
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (5, 'The Shining', 1977, 3030, 1);
+INSERT INTO `library`.`Book` (`book_id`, `title`, `publish-year`, `category_id`, `copies_owned`) VALUES (6, 'The ABC murders', 1936, 4040, 3);
+
+CREATE TABLE IF NOT EXISTS `library`.`Author` (
+  `author_id` INT NOT NULL AUTO_INCREMENT,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`author_id`))
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Author` (`author_id`, `firstname`, `lastname`) VALUES (1, 'William', ' Shakespeare');
+INSERT INTO `library`.`Author` (`author_id`, `firstname`, `lastname`) VALUES (2, 'Agatha ', 'Christie');
+INSERT INTO `library`.`Author` (`author_id`, `firstname`, `lastname`) VALUES (3, 'J. K. ', 'Rowling');
+INSERT INTO `library`.`Author` (`author_id`, `firstname`, `lastname`) VALUES (4, 'Alexander', ' Pushkin');
+INSERT INTO `library`.`Author` (`author_id`, `firstname`, `lastname`) VALUES (5, 'Stephen', ' King');
+
+CREATE TABLE IF NOT EXISTS `library`.`Book_author` (
+  `book_id` INT NOT NULL,
+  `author_id` INT NOT NULL,
+  INDEX `book_id_idx` (`book_id` ASC) VISIBLE,
+  INDEX `author_id_idx` (`author_id` ASC) VISIBLE,
+  CONSTRAINT `book_id`
+    FOREIGN KEY (`book_id`)
+    REFERENCES `library`.`Book` (`book_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `author_id`
+    FOREIGN KEY (`author_id`)
+    REFERENCES `library`.`Author` (`author_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (6, 2);
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (1, 1);
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (2, 3);
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (3, 4);
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (4, 5);
+INSERT INTO `library`.`Book_author` (`book_id`, `author_id`) VALUES (5, 5);
+
+CREATE TABLE IF NOT EXISTS `library`.`Reader_status` (
+  `Status_id` INT NOT NULL AUTO_INCREMENT,
+  `status_value` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`Status_id`))
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (10, 'Active');
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (20, 'Cancelled');
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (30, 'Active');
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (40, 'Active');
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (50, 'Active');
+
+CREATE TABLE IF NOT EXISTS `library`.`Reader` (
+  `reader_id` INT NOT NULL,
+  `firstname` VARCHAR(45) NOT NULL,
+  `lastname` VARCHAR(45) NOT NULL,
+  `phone-number` VARCHAR(10) NOT NULL,
+  `active_status_id` INT NOT NULL,
+  PRIMARY KEY (`reader_id`),
+  INDEX `active_status_id_idx` (`active_status_id` ASC) VISIBLE,
+  CONSTRAINT `active_status_id`
+    FOREIGN KEY (`active_status_id`)
+    REFERENCES `library`.`Reader_status` (`Status_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (1, 'John', 'Smith', '9195863230', 10);
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (2, 'Mark', 'Sacks', '9195627774', 20);
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (3, 'Susan', 'Johnson', '9198564325', 30);
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (4, 'Nick', 'States', '9198889999', 40);
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (5, 'Martha', 'Stew', '9193642256', 50);
+
+CREATE TABLE IF NOT EXISTS `library`.`Current Loan` (
+  `loan_id` INT NOT NULL AUTO_INCREMENT,
+  `reader_id` INT NOT NULL,
+  `book_id` INT NOT NULL,
+  `loan-date` VARCHAR(45) NOT NULL,
+  `due-date` VARCHAR(45) NOT NULL,
+  `returned-date` VARCHAR(45) NOT NULL,
+  INDEX `reader_id_idx` (`reader_id` ASC) VISIBLE,
+  INDEX `book_id_idx` (`book_id` ASC) VISIBLE,
+  PRIMARY KEY (`loan_id`),
+  CONSTRAINT `reader_id`
+    FOREIGN KEY (`reader_id`)
+    REFERENCES `library`.`Reader` (`reader_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `book_id2`
+    FOREIGN KEY (`book_id`)
+    REFERENCES `library`.`Book` (`book_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Current Loan` (`loan_id`, `reader_id`, `book_id`, `loan-date`, `due-date`, `returned-date`) VALUES (1, 3, 3, '07.01.22', '14.01.22', '17.01.22');
+INSERT INTO `library`.`Current Loan` (`loan_id`, `reader_id`, `book_id`, `loan-date`, `due-date`, `returned-date`) VALUES (2, 5, 6, '23.01.22', '01.02.22', '31.01.22');
+INSERT INTO `library`.`Current Loan` (`loan_id`, `reader_id`, `book_id`, `loan-date`, `due-date`, `returned-date`) VALUES (3, 4, 2, '04.02.22', '12.02.22', '');
+INSERT INTO `library`.`Current Loan` (`loan_id`, `reader_id`, `book_id`, `loan-date`, `due-date`, `returned-date`) VALUES (4, 1, 2, '05.02.22', '13.02.22', '');
+
+CREATE TABLE IF NOT EXISTS `library`.`Fine` (
+  `fine_id` INT NOT NULL AUTO_INCREMENT,
+  `reader_id` INT NOT NULL,
+  `loan_id` INT NOT NULL,
+  `fine_date` VARCHAR(45) NOT NULL,
+  `fine_amount` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`fine_id`),
+  INDEX `reader_id_idx` (`reader_id` ASC) VISIBLE,
+  INDEX `loan_id_idx` (`loan_id` ASC) VISIBLE,
+  CONSTRAINT `reader_id2`
+    FOREIGN KEY (`reader_id`)
+    REFERENCES `library`.`Reader` (`reader_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `loan_id`
+    FOREIGN KEY (`loan_id`)
+    REFERENCES `library`.`Current Loan` (`loan_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Fine` (`fine_id`, `reader_id`, `loan_id`, `fine_date`, `fine_amount`) VALUES (1, 3, 1, '17.02.22', '5$');
+
+CREATE TABLE IF NOT EXISTS `library`.`Fine_payment` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `reader_id` INT NOT NULL,
+  `payment_date` VARCHAR(45) NOT NULL,
+  `payment_amount` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `reader_id_idx` (`reader_id` ASC) VISIBLE,
+  CONSTRAINT `reader_id3`
+    FOREIGN KEY (`reader_id`)
+    REFERENCES `library`.`Reader` (`reader_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+INSERT INTO `library`.`Fine_payment` (`id`, `reader_id`, `payment_date`, `payment_amount`) VALUES (1, 1, '18.02.22', '5$');
+
+
+
+
+
+
+
+INSERT INTO `library`.`Reader_status` (`Status_id`, `status_value`) VALUES (60, 'Cancelled');
+INSERT INTO `library`.`Reader` (`reader_id`, `firstname`, `lastname`, `phone-number`, `active_status_id`) VALUES (6, 'Alan', 'Walker', '9145833230', 60);
+INSERT INTO `library`.`Current Loan` (`loan_id`, `reader_id`, `book_id`, `loan-date`, `due-date`, `returned-date`) VALUES (5, 6, 2, '07.04.22', '14.04.22', '13.04.22');
+
+select * from Reader;
+select * from `library`.`Current Loan`;
+DELETE FROM  `library`.`Current Loan` WHERE loan_id = 5;
